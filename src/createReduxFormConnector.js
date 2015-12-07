@@ -7,12 +7,10 @@ import createHigherOrderComponent from './createHigherOrderComponent';
  * but if they do, the connected components below it need to be redefined.
  */
 const createReduxFormConnector =
-  (isReactNative, React) =>
+  (isReactNative, React, connect) =>
     (WrappedComponent, mapStateToProps, mapDispatchToProps) => {
       const {Component, PropTypes} = React;
-
       class ReduxFormConnector extends Component {
-
         constructor(props) {
           super(props);
           this.cache = lazyCache(this, {
@@ -24,7 +22,7 @@ const createReduxFormConnector =
                 'formKey',
                 'getFormState'
               ],
-              fn: createHigherOrderComponent(props, isReactNative, React, WrappedComponent,
+              fn: createHigherOrderComponent(props, isReactNative, React, connect, WrappedComponent,
                 mapStateToProps, mapDispatchToProps)
             }
           });
@@ -38,7 +36,7 @@ const createReduxFormConnector =
           const {ReduxForm} = this.cache;
           // remove some redux-form config-only props
           const {reduxMountPoint, destroyOnUnmount, form, getFormState, touchOnBlur, touchOnChange,
-            ...passableProps } = this.props;
+            ...passableProps } = this.props; // eslint-disable-line no-redeclare
           return <ReduxForm {...passableProps}/>;
         }
       }
@@ -53,7 +51,10 @@ const createReduxFormConnector =
         touchOnBlur: PropTypes.bool,
         touchOnChange: PropTypes.bool
       };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3fa1f44c4c07240f28d660f6790dec0ee913fd47
       ReduxFormConnector.defaultProps = {
         reduxMountPoint: 'form',
         getFormState: (state, reduxMountPoint) => state[reduxMountPoint]

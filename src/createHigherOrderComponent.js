@@ -1,4 +1,3 @@
-import {connect} from 'react-redux';
 import * as importedActions from './actions';
 import getDisplayName from './getDisplayName';
 import {initialState} from './reducer';
@@ -20,13 +19,13 @@ import wrapMapStateToProps from './wrapMapStateToProps';
 const createHigherOrderComponent = (config,
                                     isReactNative,
                                     React,
+                                    connect,
                                     WrappedComponent,
                                     mapStateToProps,
                                     mapDispatchToProps) => {
   const {Component, PropTypes} = React;
   return (reduxMountPoint, formName, formKey, getFormState) => {
     class ReduxForm extends Component {
-
       constructor(props) {
         super(props);
         // bind functions
@@ -87,19 +86,21 @@ const createHigherOrderComponent = (config,
           // submitOrEvent is an event: fire submit
           handleSubmit(check(onSubmit), values, this.props, this.asyncValidate) :
           // submitOrEvent is the submit function: return deferred submit thunk
-          silenceEvents(() => handleSubmit(check(submitOrEvent), values, this.props, this.asyncValidate));
+          silenceEvents(event => {
+            silenceEvent(event);
+            handleSubmit(check(submitOrEvent), values, this.props, this.asyncValidate);
+          });
       }
 
       render() {
         const allFields = this.fields;
-        const {asyncBlurFields, blur, change, destroy, focus, fields, form, initialValues, initialize, onSubmit, reset,
-          startAsyncValidation, startSubmit, stopAsyncValidation, stopSubmit, touch, untouch, validate,
-          ...passableProps} = this.props;
+        const {addArrayValue, asyncBlurFields, blur, change, destroy, focus, fields, form, initialValues, initialize,
+          onSubmit, propNamespace, reset, removeArrayValue, returnRejectedSubmitPromise, startAsyncValidation,
+          startSubmit, stopAsyncValidation, stopSubmit, submitFailed, touch, untouch, validate,
+          ...passableProps} = this.props; // eslint-disable-line no-redeclare
         const {allPristine, allValid, errors, formError, values} = allFields._meta;
 
-        return (<WrappedComponent {...{
-          ...passableProps, // contains dispatch
-
+        const props = {
           // State:
           active: form._active,
           asyncValidating: form._asyncValidating,
@@ -111,6 +112,7 @@ const createHigherOrderComponent = (config,
           invalid: !allValid,
           pristine: allPristine,
           submitting: form._submitting,
+          submitFailed: form._submitFailed,
           valid: allValid,
           values,
 
@@ -125,9 +127,54 @@ const createHigherOrderComponent = (config,
           touchAll: silenceEvents(() => touch(...fields)),
           untouch: silenceEvents((...untouchFields) => untouch(...untouchFields)),
           untouchAll: silenceEvents(() => untouch(...fields))
+        };
+        const passedProps = propNamespace ? {[propNamespace]: props} : props;
+        return (<WrappedComponent {...{
+          ...passableProps, // contains dispatch
+          ...passedProps
         }}/>);
       }
     }
+    ReduxForm.displayName = `ReduxForm(${getDisplayName(WrappedComponent)})`;
+    ReduxForm.WrappedComponent = WrappedComponent;
+    ReduxForm.propTypes = {
+      // props:
+      asyncBlurFields: PropTypes.arrayOf(PropTypes.string),
+      asyncValidate: PropTypes.func,
+      dispatch: PropTypes.func.isRequired,
+      fields: PropTypes.arrayOf(PropTypes.string).isRequired,
+      form: PropTypes.object,
+      initialValues: PropTypes.any,
+      onSubmit: PropTypes.func,
+      propNamespace: PropTypes.string,
+      readonly: PropTypes.bool,
+      returnRejectedSubmitPromise: PropTypes.bool,
+      validate: PropTypes.func,
+
+      // actions:
+      addArrayValue: PropTypes.func.isRequired,
+      blur: PropTypes.func.isRequired,
+      change: PropTypes.func.isRequired,
+      destroy: PropTypes.func.isRequired,
+      focus: PropTypes.func.isRequired,
+      initialize: PropTypes.func.isRequired,
+      removeArrayValue: PropTypes.func.isRequired,
+      reset: PropTypes.func.isRequired,
+      startAsyncValidation: PropTypes.func.isRequired,
+      startSubmit: PropTypes.func.isRequired,
+      stopAsyncValidation: PropTypes.func.isRequired,
+      stopSubmit: PropTypes.func.isRequired,
+      submitFailed: PropTypes.func.isRequired,
+      touch: PropTypes.func.isRequired,
+      untouch: PropTypes.func.isRequired
+    };
+    ReduxForm.defaultProps = {
+      asyncBlurFields: [],
+      form: initialState,
+      readonly: false,
+      returnRejectedSubmitPromise: false,
+      validate: () => ({})
+    };
 
     ReduxForm.WrappedComponen = WrappedComponent;
 

@@ -4,18 +4,25 @@ import mapValues from './mapValues';
 import bindActionData from './bindActionData';
 import * as actions from './actions';
 import * as actionTypes from './actionTypes';
+import createPropTypes from './createPropTypes';
+import getValues from './getValuesFromState';
 
 // bind form as first parameter of action creators
 const boundActions = {
   ...mapValues({
     ...actions,
-    initializeWithKey: (key, data) => bindActionData(actions.initialize, {key})(data),
+    changeWithKey: (key, ...args) => bindActionData(actions.change, {key})(...args),
+    initializeWithKey: (key, ...args) => bindActionData(actions.initialize, {key})(...args),
+    reset: (key) => bindActionData(actions.reset, {key})(),
+    touchWithKey: (key, ...args) => bindActionData(actions.touch, {key})(...args),
+    untouchWithKey: (key, ...args) => bindActionData(actions.untouch, {key})(...args),
     destroy: (key) => bindActionData(actions.destroy, {key})()
   }, action => (form, ...args) => bindActionData(action, {form})(...args))
 };
 
 const blur = boundActions.blur;
 const change = boundActions.change;
+const changeWithKey = boundActions.changeWithKey;
 const destroy = boundActions.destroy;
 const focus = boundActions.focus;
 const initialize = boundActions.initialize;
@@ -25,26 +32,35 @@ const startAsyncValidation = boundActions.startAsyncValidation;
 const startSubmit = boundActions.startSubmit;
 const stopAsyncValidation = boundActions.stopAsyncValidation;
 const stopSubmit = boundActions.stopSubmit;
+const submitFailed = boundActions.submitFailed;
 const touch = boundActions.touch;
+const touchWithKey = boundActions.touchWithKey;
 const untouch = boundActions.untouch;
+const untouchWithKey = boundActions.untouchWithKey;
 
-export default function createAll(isReactNative, React) {
+export default function createAll(isReactNative, React, connect) {
   return {
     actionTypes,
     blur,
     change,
+    changeWithKey,
     destroy,
     focus,
-    reducer,
+    getValues,
     initialize,
     initializeWithKey,
-    reduxForm: createReduxForm(isReactNative, React),
+    propTypes: createPropTypes(React),
+    reduxForm: createReduxForm(isReactNative, React, connect),
+    reducer,
     reset,
     startAsyncValidation,
     startSubmit,
     stopAsyncValidation,
     stopSubmit,
+    submitFailed,
     touch,
-    untouch
+    touchWithKey,
+    untouch,
+    untouchWithKey
   };
 }

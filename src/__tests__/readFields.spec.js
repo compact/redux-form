@@ -256,6 +256,99 @@ describe('readFields', () => {
     expect(result._meta.errors).toEqual({foo: 'fooError', bar: 'barError'});
   });
 
+
+  it('should initialize nested fields with sync errors', () => {
+    const result = readFields({
+      asyncBlurFields: [],
+      blur,
+      change,
+      fields: ['foo.bar'],
+      focus,
+      form: {
+        foo: {
+          bar: {
+            value: 'barValue'
+          }
+        }
+      },
+      validate: () => ({
+        foo: {
+          bar: 'barError'
+        }
+      })
+    }, {});
+    expectField({
+      field: result.foo.bar,
+      name: 'foo.bar',
+      value: 'barValue',
+      dirty: true,
+      touched: false,
+      visited: false,
+      error: 'barError',
+      initialValue: undefined,
+      readonly: false
+    });
+    expect(result._meta.allPristine).toBe(false);
+    expect(result._meta.allValid).toBe(false);
+    expect(result._meta.values).toEqual({foo: {bar: 'barValue'}});
+    expect(result._meta.errors).toEqual({foo: {bar: 'barError'}});
+  });
+
+
+  it('should initialize array fields with sync errors', () => {
+    const result = readFields({
+      asyncBlurFields: [],
+      blur,
+      change,
+      fields: ['foo[]', 'bar[].age'],
+      focus,
+      form: {
+        foo: [
+          {
+            value: 'fooValue'
+          }
+        ],
+        bar: [
+          {
+            age: {
+              value: 'barValue'
+            }
+          }
+        ]
+      },
+      validate: () => ({
+        foo: ['fooError'],
+        bar: [{age: 'barError'}]
+      })
+    }, {});
+    expectField({
+      field: result.foo[0],
+      name: 'foo[0]',
+      value: 'fooValue',
+      dirty: true,
+      touched: false,
+      visited: false,
+      error: 'fooError',
+      initialValue: undefined,
+      readonly: false
+    });
+    expectField({
+      field: result.bar[0].age,
+      name: 'bar[0].age',
+      value: 'barValue',
+      dirty: true,
+      touched: false,
+      visited: false,
+      error: 'barError',
+      initialValue: undefined,
+      readonly: false
+    });
+    expect(result._meta.allPristine).toBe(false);
+    expect(result._meta.allValid).toBe(false);
+    expect(result._meta.values).toEqual({foo: ['fooValue'], bar: [{age: 'barValue'}]});
+    expect(result._meta.errors).toEqual({foo: ['fooError'], bar: [{age: 'barError'}]});
+  });
+
   it('should update fields', () => {
     const props = {
       asyncBlurFields: [],
@@ -1042,7 +1135,8 @@ describe('readFields', () => {
         },
         validate: noValidation
       }, {});
-    expect(result1.foo.value).toBe('fooValue');
+    const foo1 = result1.foo;
+    expect(foo1.value).toBe('fooValue');
     const result2 =
       readFields({
         asyncBlurFields: [],
@@ -1060,7 +1154,65 @@ describe('readFields', () => {
         },
         validate: noValidation
       }, result1);
-    expect(result1.foo.value).toBe('fooValue');
-    expect(result2.foo.value).toBe('newValue');
+    const foo2 = result2.foo;
+    expect(foo1.value).toBe('fooValue');
+    expect(foo2.value).toBe('newValue');
+  });
+
+  it('should init deep fields', () => {
+    const result =
+      readFields({
+        asyncBlurFields: [],
+        blur,
+        change,
+        fields: ['foo.dog', 'foo.cat', 'bar.rat', 'bar.ram'],
+        focus,
+        form: {},
+        validate: noValidation
+      }, {});
+    expectField({
+      field: result.foo.dog,
+      name: 'foo.dog',
+      value: undefined,
+      dirty: false,
+      touched: false,
+      visited: false,
+      error: undefined,
+      initialValue: undefined,
+      readonly: false
+    });
+    expectField({
+      field: result.foo.cat,
+      name: 'foo.cat',
+      value: undefined,
+      dirty: false,
+      touched: false,
+      visited: false,
+      error: undefined,
+      initialValue: undefined,
+      readonly: false
+    });
+    expectField({
+      field: result.bar.rat,
+      name: 'bar.rat',
+      value: undefined,
+      dirty: false,
+      touched: false,
+      visited: false,
+      error: undefined,
+      initialValue: undefined,
+      readonly: false
+    });
+    expectField({
+      field: result.bar.ram,
+      name: 'bar.ram',
+      value: undefined,
+      dirty: false,
+      touched: false,
+      visited: false,
+      error: undefined,
+      initialValue: undefined,
+      readonly: false
+    });
   });
 });
