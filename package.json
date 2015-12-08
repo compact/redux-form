@@ -1,5 +1,6 @@
 {
   "name": "redux-form",
+  "publishConfig": {"registry":"https://repository.mark43.com/artifactory/api/npm/thirdparty-npm"},
   "version": "3.1.7",
   "description": "A higher order component decorator for forms using Redux and React",
   "main": "./lib/index.js",
@@ -38,7 +39,7 @@
     "deep-equal": "^1.0.1",
     "hoist-non-react-statics": "^1.0.3",
     "is-promise": "^2.1.0",
-    "react-ie8-cache": "git://github.com/mattydoincode/react-ie8-cache.git"
+    "react-ie8-cache": "0.0.1"
   },
   "devDependencies": {
     "babel": "^5.8.23",
