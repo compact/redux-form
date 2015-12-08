@@ -26,12 +26,9 @@ const readField = (state, fieldName, pathToHere = '', fields, syncErrors, asyncV
     const stateArray = state && state[key] || [];
     if (!fields[key]) {
       fields[key] = [];
-      Object.defineProperty(fields[key], 'addField', {
-        value: (value, index) => addArrayValue(pathToHere + key, value, index)
-      });
-      Object.defineProperty(fields[key], 'removeField', {
-        value: index => removeArrayValue(pathToHere + key, index)
-      });
+      // cannot use object.defineProperty
+      fields[key].addField = (value, index) => addArrayValue(pathToHere + key, value, index);
+      fields[key].removeField = index => removeArrayValue(pathToHere + key, index);
     }
     const fieldArray = fields[key];
     stateArray.forEach((fieldState, index) => {

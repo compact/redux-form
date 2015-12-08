@@ -26,15 +26,13 @@ const readFields = (props, myFields, asyncValidate, isReactNative) => {
   fields.forEach(name => {
     readField(form, name, undefined, fieldObjects, syncErrors, asyncValidate, isReactNative, props, tally);
   });
-  Object.defineProperty(fieldObjects, '_meta', {
-    value: {
-      allPristine,
-      allValid,
-      values,
-      errors,
-      formError
-    }
-  });
+  fieldObjects._meta = {
+    allPristine,
+    allValid,
+    values,
+    errors,
+    formError
+  };
   return fieldObjects;
 };
 export default readFields;
