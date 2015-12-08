@@ -1,5 +1,5 @@
 {
-  "name": "redux-form",
+  "name": "redux-form-ie8",
   "publishConfig": {"registry":"https://repository.mark43.com/artifactory/api/npm/thirdparty-npm"},
   "version": "0.0.1",
   "description": "A higher order component decorator for forms using Redux and React",
