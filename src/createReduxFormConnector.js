@@ -1,4 +1,4 @@
-import lazyCache from 'react-lazy-cache';
+import lazyCache from 'react-ie8-cache';
 import getDisplayName from './getDisplayName';
 import createHigherOrderComponent from './createHigherOrderComponent';
 

@@ -64,7 +64,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(55);
+	var _reactRedux = __webpack_require__(58);
 
 	var _createAll2 = __webpack_require__(27);
 
@@ -205,6 +205,106 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var pSlice = Array.prototype.slice;
+	var objectKeys = __webpack_require__(48);
+	var isArguments = __webpack_require__(47);
+
+	var deepEqual = module.exports = function (actual, expected, opts) {
+	  if (!opts) opts = {};
+	  // 7.1. All identical values are equivalent, as determined by ===.
+	  if (actual === expected) {
+	    return true;
+
+	  } else if (actual instanceof Date && expected instanceof Date) {
+	    return actual.getTime() === expected.getTime();
+
+	  // 7.3. Other pairs that do not both pass typeof value == 'object',
+	  // equivalence is determined by ==.
+	  } else if (!actual || !expected || typeof actual != 'object' && typeof expected != 'object') {
+	    return opts.strict ? actual === expected : actual == expected;
+
+	  // 7.4. For all other Object pairs, including Array objects, equivalence is
+	  // determined by having the same number of owned properties (as verified
+	  // with Object.prototype.hasOwnProperty.call), the same set of keys
+	  // (although not necessarily the same order), equivalent values for every
+	  // corresponding key, and an identical 'prototype' property. Note: this
+	  // accounts for both named and indexed properties on Arrays.
+	  } else {
+	    return objEquiv(actual, expected, opts);
+	  }
+	}
+
+	function isUndefinedOrNull(value) {
+	  return value === null || value === undefined;
+	}
+
+	function isBuffer (x) {
+	  if (!x || typeof x !== 'object' || typeof x.length !== 'number') return false;
+	  if (typeof x.copy !== 'function' || typeof x.slice !== 'function') {
+	    return false;
+	  }
+	  if (x.length > 0 && typeof x[0] !== 'number') return false;
+	  return true;
+	}
+
+	function objEquiv(a, b, opts) {
+	  var i, key;
+	  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
+	    return false;
+	  // an identical 'prototype' property.
+	  if (a.prototype !== b.prototype) return false;
+	  //~~~I've managed to break Object.keys through screwy arguments passing.
+	  //   Converting to array solves the problem.
+	  if (isArguments(a)) {
+	    if (!isArguments(b)) {
+	      return false;
+	    }
+	    a = pSlice.call(a);
+	    b = pSlice.call(b);
+	    return deepEqual(a, b, opts);
+	  }
+	  if (isBuffer(a)) {
+	    if (!isBuffer(b)) {
+	      return false;
+	    }
+	    if (a.length !== b.length) return false;
+	    for (i = 0; i < a.length; i++) {
+	      if (a[i] !== b[i]) return false;
+	    }
+	    return true;
+	  }
+	  try {
+	    var ka = objectKeys(a),
+	        kb = objectKeys(b);
+	  } catch (e) {//happens when one is a string literal and the other isn't
+	    return false;
+	  }
+	  // having the same number of owned properties (keys incorporates
+	  // hasOwnProperty)
+	  if (ka.length != kb.length)
+	    return false;
+	  //the same set of keys (although not necessarily the same order),
+	  ka.sort();
+	  kb.sort();
+	  //~~~cheap key test
+	  for (i = ka.length - 1; i >= 0; i--) {
+	    if (ka[i] != kb[i])
+	      return false;
+	  }
+	  //equivalent values for every corresponding key, and
+	  //~~~possibly expensive deep test
+	  for (i = ka.length - 1; i >= 0; i--) {
+	    key = ka[i];
+	    if (!deepEqual(a[key], b[key], opts)) return false;
+	  }
+	  return typeof a === typeof b;
+	}
+
+
+/***/ },
+/* 5 */
 /***/ function(module, exports) {
 
 	module.exports = isPromise;
@@ -215,7 +315,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -308,7 +408,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -346,7 +446,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -363,7 +463,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = createOnDragStart;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -372,7 +472,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _isEvent = __webpack_require__(9);
+	var _isEvent = __webpack_require__(10);
 
 	var _isEvent2 = _interopRequireDefault(_isEvent);
 
@@ -424,7 +524,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -438,7 +538,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -447,7 +547,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _isEvent = __webpack_require__(9);
+	var _isEvent = __webpack_require__(10);
 
 	var _isEvent2 = _interopRequireDefault(_isEvent);
 
@@ -463,7 +563,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -478,7 +578,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -540,7 +640,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	/**
@@ -580,7 +680,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	/**
@@ -647,7 +747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -668,15 +768,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _mapValues2 = _interopRequireDefault(_mapValues);
 
-	var _read = __webpack_require__(14);
+	var _read = __webpack_require__(15);
 
 	var _read2 = _interopRequireDefault(_read);
 
-	var _write = __webpack_require__(16);
+	var _write = __webpack_require__(17);
 
 	var _write2 = _interopRequireDefault(_write);
 
-	var _getValuesFromState = __webpack_require__(13);
+	var _getValuesFromState = __webpack_require__(14);
 
 	var _getValuesFromState2 = _interopRequireDefault(_getValuesFromState);
 
@@ -958,7 +1058,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = decorate(formReducer);
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	/**
@@ -1061,106 +1161,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports['default'] = write;
 	module.exports = exports['default'];
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var pSlice = Array.prototype.slice;
-	var objectKeys = __webpack_require__(48);
-	var isArguments = __webpack_require__(47);
-
-	var deepEqual = module.exports = function (actual, expected, opts) {
-	  if (!opts) opts = {};
-	  // 7.1. All identical values are equivalent, as determined by ===.
-	  if (actual === expected) {
-	    return true;
-
-	  } else if (actual instanceof Date && expected instanceof Date) {
-	    return actual.getTime() === expected.getTime();
-
-	  // 7.3. Other pairs that do not both pass typeof value == 'object',
-	  // equivalence is determined by ==.
-	  } else if (!actual || !expected || typeof actual != 'object' && typeof expected != 'object') {
-	    return opts.strict ? actual === expected : actual == expected;
-
-	  // 7.4. For all other Object pairs, including Array objects, equivalence is
-	  // determined by having the same number of owned properties (as verified
-	  // with Object.prototype.hasOwnProperty.call), the same set of keys
-	  // (although not necessarily the same order), equivalent values for every
-	  // corresponding key, and an identical 'prototype' property. Note: this
-	  // accounts for both named and indexed properties on Arrays.
-	  } else {
-	    return objEquiv(actual, expected, opts);
-	  }
-	}
-
-	function isUndefinedOrNull(value) {
-	  return value === null || value === undefined;
-	}
-
-	function isBuffer (x) {
-	  if (!x || typeof x !== 'object' || typeof x.length !== 'number') return false;
-	  if (typeof x.copy !== 'function' || typeof x.slice !== 'function') {
-	    return false;
-	  }
-	  if (x.length > 0 && typeof x[0] !== 'number') return false;
-	  return true;
-	}
-
-	function objEquiv(a, b, opts) {
-	  var i, key;
-	  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
-	    return false;
-	  // an identical 'prototype' property.
-	  if (a.prototype !== b.prototype) return false;
-	  //~~~I've managed to break Object.keys through screwy arguments passing.
-	  //   Converting to array solves the problem.
-	  if (isArguments(a)) {
-	    if (!isArguments(b)) {
-	      return false;
-	    }
-	    a = pSlice.call(a);
-	    b = pSlice.call(b);
-	    return deepEqual(a, b, opts);
-	  }
-	  if (isBuffer(a)) {
-	    if (!isBuffer(b)) {
-	      return false;
-	    }
-	    if (a.length !== b.length) return false;
-	    for (i = 0; i < a.length; i++) {
-	      if (a[i] !== b[i]) return false;
-	    }
-	    return true;
-	  }
-	  try {
-	    var ka = objectKeys(a),
-	        kb = objectKeys(b);
-	  } catch (e) {//happens when one is a string literal and the other isn't
-	    return false;
-	  }
-	  // having the same number of owned properties (keys incorporates
-	  // hasOwnProperty)
-	  if (ka.length != kb.length)
-	    return false;
-	  //the same set of keys (although not necessarily the same order),
-	  ka.sort();
-	  kb.sort();
-	  //~~~cheap key test
-	  for (i = ka.length - 1; i >= 0; i--) {
-	    if (ka[i] != kb[i])
-	      return false;
-	  }
-	  //equivalent values for every corresponding key, and
-	  //~~~possibly expensive deep test
-	  for (i = ka.length - 1; i >= 0; i--) {
-	    key = ka[i];
-	    if (!deepEqual(a[key], b[key], opts)) return false;
-	  }
-	  return typeof a === typeof b;
-	}
-
 
 /***/ },
 /* 18 */
@@ -1405,15 +1405,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _createStore2 = _interopRequireDefault(_createStore);
 
-	var _utilsCombineReducers = __webpack_require__(61);
+	var _utilsCombineReducers = __webpack_require__(64);
 
 	var _utilsCombineReducers2 = _interopRequireDefault(_utilsCombineReducers);
 
-	var _utilsBindActionCreators = __webpack_require__(60);
+	var _utilsBindActionCreators = __webpack_require__(63);
 
 	var _utilsBindActionCreators2 = _interopRequireDefault(_utilsBindActionCreators);
 
-	var _utilsApplyMiddleware = __webpack_require__(59);
+	var _utilsApplyMiddleware = __webpack_require__(62);
 
 	var _utilsApplyMiddleware2 = _interopRequireDefault(_utilsApplyMiddleware);
 
@@ -1533,7 +1533,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _isPromise = __webpack_require__(4);
+	var _isPromise = __webpack_require__(5);
 
 	var _isPromise2 = _interopRequireDefault(_isPromise);
 
@@ -1582,7 +1582,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _reducer = __webpack_require__(15);
+	var _reducer = __webpack_require__(16);
 
 	var _reducer2 = _interopRequireDefault(_reducer);
 
@@ -1594,11 +1594,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _mapValues2 = _interopRequireDefault(_mapValues);
 
-	var _bindActionData = __webpack_require__(6);
+	var _bindActionData = __webpack_require__(7);
 
 	var _bindActionData2 = _interopRequireDefault(_bindActionData);
 
-	var _actions = __webpack_require__(5);
+	var _actions = __webpack_require__(6);
 
 	var actions = _interopRequireWildcard(_actions);
 
@@ -1610,7 +1610,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _createPropTypes2 = _interopRequireDefault(_createPropTypes);
 
-	var _getValuesFromState = __webpack_require__(13);
+	var _getValuesFromState = __webpack_require__(14);
 
 	var _getValuesFromState2 = _interopRequireDefault(_getValuesFromState);
 
@@ -1727,25 +1727,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var _actions = __webpack_require__(5);
+	var _actions = __webpack_require__(6);
 
 	var importedActions = _interopRequireWildcard(_actions);
 
-	var _getDisplayName = __webpack_require__(11);
+	var _getDisplayName = __webpack_require__(12);
 
 	var _getDisplayName2 = _interopRequireDefault(_getDisplayName);
 
-	var _reducer = __webpack_require__(15);
+	var _reducer = __webpack_require__(16);
 
-	var _deepEqual = __webpack_require__(17);
+	var _deepEqual = __webpack_require__(4);
 
 	var _deepEqual2 = _interopRequireDefault(_deepEqual);
 
-	var _bindActionData = __webpack_require__(6);
+	var _bindActionData = __webpack_require__(7);
 
 	var _bindActionData2 = _interopRequireDefault(_bindActionData);
 
-	var _getValues = __webpack_require__(12);
+	var _getValues = __webpack_require__(13);
 
 	var _getValues2 = _interopRequireDefault(_getValues);
 
@@ -1769,7 +1769,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _eventsSilenceEvents2 = _interopRequireDefault(_eventsSilenceEvents);
 
-	var _eventsSilenceEvent = __webpack_require__(10);
+	var _eventsSilenceEvent = __webpack_require__(11);
 
 	var _eventsSilenceEvent2 = _interopRequireDefault(_eventsSilenceEvent);
 
@@ -2215,11 +2215,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var _reactLazyCache = __webpack_require__(50);
+	var _reactIe8Cache = __webpack_require__(52);
 
-	var _reactLazyCache2 = _interopRequireDefault(_reactLazyCache);
+	var _reactIe8Cache2 = _interopRequireDefault(_reactIe8Cache);
 
-	var _getDisplayName = __webpack_require__(11);
+	var _getDisplayName = __webpack_require__(12);
 
 	var _getDisplayName2 = _interopRequireDefault(_getDisplayName);
 
@@ -2243,7 +2243,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, ReduxFormConnector);
 
 	        _Component.call(this, props);
-	        this.cache = _reactLazyCache2['default'](this, {
+	        this.cache = _reactIe8Cache2['default'](this, {
 	          ReduxForm: {
 	            params: [
 	            // props that effect how redux-form connects to the redux store
@@ -2312,7 +2312,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _getValue = __webpack_require__(8);
+	var _getValue = __webpack_require__(9);
 
 	var _getValue2 = _interopRequireDefault(_getValue);
 
@@ -2338,7 +2338,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _getValue = __webpack_require__(8);
+	var _getValue = __webpack_require__(9);
 
 	var _getValue2 = _interopRequireDefault(_getValue);
 
@@ -2358,7 +2358,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.__esModule = true;
 
-	var _createOnDragStart = __webpack_require__(7);
+	var _createOnDragStart = __webpack_require__(8);
 
 	var createOnDrop = function createOnDrop(name, change) {
 	  return function (event) {
@@ -2393,7 +2393,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _silenceEvent = __webpack_require__(10);
+	var _silenceEvent = __webpack_require__(11);
 
 	var _silenceEvent2 = _interopRequireDefault(_silenceEvent);
 
@@ -2420,7 +2420,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _isPromise = __webpack_require__(4);
+	var _isPromise = __webpack_require__(5);
 
 	var _isPromise2 = _interopRequireDefault(_isPromise);
 
@@ -2562,7 +2562,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _eventsCreateOnChange2 = _interopRequireDefault(_eventsCreateOnChange);
 
-	var _eventsCreateOnDragStart = __webpack_require__(7);
+	var _eventsCreateOnDragStart = __webpack_require__(8);
 
 	var _eventsCreateOnDragStart2 = _interopRequireDefault(_eventsCreateOnDragStart);
 
@@ -2578,7 +2578,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _silencePromise2 = _interopRequireDefault(_silencePromise);
 
-	var _read = __webpack_require__(14);
+	var _read = __webpack_require__(15);
 
 	var _read2 = _interopRequireDefault(_read);
 
@@ -2732,11 +2732,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _readField2 = _interopRequireDefault(_readField);
 
-	var _write = __webpack_require__(16);
+	var _write = __webpack_require__(17);
 
 	var _write2 = _interopRequireDefault(_write);
 
-	var _getValues = __webpack_require__(12);
+	var _getValues = __webpack_require__(13);
 
 	var _getValues2 = _interopRequireDefault(_getValues);
 
@@ -2831,7 +2831,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _isPromise = __webpack_require__(4);
+	var _isPromise = __webpack_require__(5);
 
 	var _isPromise2 = _interopRequireDefault(_isPromise);
 
@@ -3047,8 +3047,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * This source code is licensed under the BSD-style license found in the
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule invariant
 	 */
 
 	'use strict';
@@ -3082,9 +3080,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var args = [a, b, c, d, e, f];
 	      var argIndex = 0;
 	      error = new Error(
-	        'Invariant Violation: ' +
 	        format.replace(/%s/g, function() { return args[argIndex++]; })
 	      );
+	      error.name = 'Invariant Violation';
 	    }
 
 	    error.framesToPop = 1; // we don't care about invariant's own frame
@@ -3105,7 +3103,131 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _lazyCache = __webpack_require__(51);
+	var _deepEqual = __webpack_require__(4);
+
+	var _deepEqual2 = _interopRequireDefault(_deepEqual);
+
+	var _reactLazyCache = __webpack_require__(53);
+
+	var _reactLazyCache2 = _interopRequireDefault(_reactLazyCache);
+
+	var _detectIE8 = __webpack_require__(51);
+
+	var _detectIE82 = _interopRequireDefault(_detectIE8);
+
+	var exportedCache = _reactLazyCache2['default'];
+	if (_detectIE82['default']) {
+	  exportedCache = function (component, calculators) {
+	    var _this = this;
+
+	    var allProps = [];
+	    var cache = {};
+	    var api = {};
+
+	    var runFunc = function runFunc(props, fn, nextProps) {
+	      var params = {};
+	      if (nextProps) {
+	        params = props.map(function (prop) {
+	          return nextProps[prop] || api[prop];
+	        });
+	      } else {
+	        params = props.map(function (prop) {
+	          return component.props[prop] || api[prop];
+	        });
+	      }
+	      var value = fn.apply(undefined, params);
+	      return { value: value, props: props };
+	    };
+
+	    var uncache = function uncache(nextProps, changedProp) {
+	      Object.keys(cache).forEach(function (key) {
+	        if (~cache[key].props.indexOf(changedProp)) {
+	          var _runFunc = runFunc(calculators[key].params, calculators[key].fn, nextProps);
+
+	          var value = _runFunc.value;
+
+	          api[key] = value;
+	          uncache(key);
+	        }
+	      });
+	    };
+
+	    Object.keys(calculators).forEach(function (key) {
+	      var fn = calculators[key].fn;
+	      var props = calculators[key].params;
+	      props.forEach(function (param) {
+	        if (! ~allProps.indexOf(param)) {
+	          allProps.push(param);
+	        }
+	      });
+	      // we run it once (non lazy cache)
+	      cache[key] = runFunc(props, fn);
+	      api[key] = cache[key].value;
+	    });
+	    api.componentWillReceiveProps = function (nextProps) {
+	      var diffProps = [];
+	      allProps.forEach(function (prop) {
+	        if (!_deepEqual2['default'](component.props[prop], nextProps[prop])) {
+	          diffProps.push(prop);
+	        }
+	      });
+	      diffProps.forEach(uncache.bind(_this, nextProps));
+	    };
+	    return api;
+	  };
+	}
+
+	exports['default'] = exportedCache;
+	module.exports = exports['default'];
+
+/***/ },
+/* 51 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	var isNode = false;
+	var result = false;
+	if (typeof module !== 'undefined' && module.exports) {
+	  isNode = true;
+	}
+	if (!isNode && typeof document !== undefined && typeof document !== null) {
+	  var div = document.createElement('div');
+	  div.innerHTML = '<!--[if lt IE 9]><i></i><![endif]-->';
+	  result = div.getElementsByTagName('i').length === 1;
+	}
+	exports['default'] = result;
+	module.exports = exports['default'];
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _cache = __webpack_require__(50);
+
+	var _cache2 = _interopRequireDefault(_cache);
+
+	exports['default'] = _cache2['default'];
+	module.exports = exports['default'];
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _lazyCache = __webpack_require__(54);
 
 	var _lazyCache2 = _interopRequireDefault(_lazyCache);
 
@@ -3113,7 +3235,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 51 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3123,7 +3245,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _deepEqual = __webpack_require__(17);
+	var _deepEqual = __webpack_require__(4);
 
 	var _deepEqual2 = _interopRequireDefault(_deepEqual);
 
@@ -3179,7 +3301,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 52 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3189,11 +3311,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _createProvider = __webpack_require__(54);
+	var _createProvider = __webpack_require__(57);
 
 	var _createProvider2 = _interopRequireDefault(_createProvider);
 
-	var _createConnect = __webpack_require__(53);
+	var _createConnect = __webpack_require__(56);
 
 	var _createConnect2 = _interopRequireDefault(_createConnect);
 
@@ -3207,7 +3329,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 53 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3228,15 +3350,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _utilsCreateStoreShape2 = _interopRequireDefault(_utilsCreateStoreShape);
 
-	var _utilsShallowEqual = __webpack_require__(57);
+	var _utilsShallowEqual = __webpack_require__(60);
 
 	var _utilsShallowEqual2 = _interopRequireDefault(_utilsShallowEqual);
 
-	var _utilsIsPlainObject = __webpack_require__(56);
+	var _utilsIsPlainObject = __webpack_require__(59);
 
 	var _utilsIsPlainObject2 = _interopRequireDefault(_utilsIsPlainObject);
 
-	var _utilsWrapActionCreators = __webpack_require__(58);
+	var _utilsWrapActionCreators = __webpack_require__(61);
 
 	var _utilsWrapActionCreators2 = _interopRequireDefault(_utilsWrapActionCreators);
 
@@ -3475,7 +3597,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 54 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3599,7 +3721,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 55 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3612,7 +3734,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentsCreateAll = __webpack_require__(52);
+	var _componentsCreateAll = __webpack_require__(55);
 
 	var _componentsCreateAll2 = _interopRequireDefault(_componentsCreateAll);
 
@@ -3624,7 +3746,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.connect = connect;
 
 /***/ },
-/* 56 */
+/* 59 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3659,7 +3781,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 57 */
+/* 60 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -3693,7 +3815,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 58 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3712,7 +3834,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 59 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3778,7 +3900,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 60 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3838,7 +3960,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 61 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3858,7 +3980,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _utilsMapValues2 = _interopRequireDefault(_utilsMapValues);
 
-	var _utilsPick = __webpack_require__(62);
+	var _utilsPick = __webpack_require__(65);
 
 	var _utilsPick2 = _interopRequireDefault(_utilsPick);
 
@@ -3974,7 +4096,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 62 */
+/* 65 */
 /***/ function(module, exports) {
 
 	/**
